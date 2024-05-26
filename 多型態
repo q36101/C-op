@@ -1,0 +1,96 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// 定義 BankAccount 類別
+class BankAccount {
+private:
+    string owner;
+    double balance;
+
+public:
+    // 構造函數
+    BankAccount(string owner, double initial_balance) {
+        this->owner = owner;
+        this->balance = initial_balance;
+    }
+
+    // 存款方法
+    void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            cout << "Deposited: " << amount << endl;
+        } else {
+            cout << "Invalid deposit amount" << endl;
+        }
+    }
+
+    // 取款方法
+    void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            cout << "Withdrew: " << amount << endl;
+        } else {
+            cout << "Invalid withdraw amount" << endl;
+        }
+    }
+
+    // 獲取餘額方法
+    double getBalance() {
+        return balance;
+    }
+
+    // 顯示帳戶信息
+    void displayAccountInfo() {
+        cout << "Owner: " << owner << ", Balance: " << balance << endl;
+    }
+
+    // 虛擬方法（多態性的基礎）
+    virtual void accountType() {
+        cout << "This is a generic bank account." << endl;
+    }
+};
+class SavingsAccount : public BankAccount {
+private:
+    double interestRate;
+
+public:
+    // 構造函數
+    SavingsAccount(string owner, double initial_balance, double interestRate)
+        : BankAccount(owner, initial_balance) {
+        this->interestRate = interestRate;
+    }
+
+    // 額外的方法來計算利息
+    void addInterest() {
+        double interest = getBalance() * interestRate;
+        deposit(interest);
+        cout << "Added interest: " << interest << endl;
+    }
+
+    // 重寫 accountType 方法
+    void accountType() override {
+        cout << "This is a savings account." << endl;
+    }
+};
+
+int main() {
+    // 創建一個 BankAccount 對象
+    BankAccount account("Alice", 1000.0);
+    account.displayAccountInfo();
+    account.deposit(500.0);
+    account.withdraw(200.0);
+    account.accountType();
+
+    // 創建一個 SavingsAccount 對象
+    SavingsAccount savings("Bob", 1000.0, 0.05);
+    savings.displayAccountInfo();
+    savings.addInterest();
+    savings.accountType();
+
+    // 使用多態性
+    BankAccount* ptr = &savings;
+    ptr->accountType();  // 這將調用 SavingsAccount 的 accountType 方法
+
+    return 0;
+}
